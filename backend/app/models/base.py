@@ -14,6 +14,4 @@ NAMING_CONVENTION = {
 
 
 class Base(DeclarativeBase):
-    """Base class for every table."""
-
     metadata = MetaData(naming_convention=NAMING_CONVENTION)

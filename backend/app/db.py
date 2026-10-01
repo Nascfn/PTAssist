@@ -3,15 +3,13 @@
 from collections.abc import Iterator
 
 from sqlalchemy import create_engine
-from sqlalchemy.orm import Session, sessionmaker
+from sqlalchemy.orm import Session
 
-from app.config import settings
+from app.config import DATABASE_URL
 
-engine = create_engine(settings.database_url, pool_pre_ping=True)
-SessionLocal = sessionmaker(bind=engine)
+engine = create_engine(DATABASE_URL, pool_pre_ping=True)
 
 
 def get_db() -> Iterator[Session]:
-    """FastAPI dependency: one database session per request."""
-    with SessionLocal() as session:
+    with Session(engine) as session:
         yield session

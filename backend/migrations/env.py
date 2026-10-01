@@ -1,11 +1,11 @@
-"""Alembic environment. The database URL comes from app settings (DATABASE_URL)."""
+"""Alembic environment. The database URL comes from DATABASE_URL."""
 
 from logging.config import fileConfig
 
 from alembic import context
 from sqlalchemy import create_engine, pool
 
-from app.config import settings
+from app.config import DATABASE_URL
 from app.models import Base
 
 config = context.config
@@ -19,7 +19,7 @@ target_metadata = Base.metadata
 def run_migrations_offline() -> None:
     """Print the migration SQL instead of running it (alembic upgrade head --sql)."""
     context.configure(
-        url=settings.database_url,
+        url=DATABASE_URL,
         target_metadata=target_metadata,
         literal_binds=True,
         dialect_opts={"paramstyle": "named"},
@@ -31,7 +31,7 @@ def run_migrations_offline() -> None:
 
 def run_migrations_online() -> None:
     """Run the migrations against the database."""
-    engine = create_engine(settings.database_url, poolclass=pool.NullPool)
+    engine = create_engine(DATABASE_URL, poolclass=pool.NullPool)
 
     with engine.connect() as connection:
         context.configure(connection=connection, target_metadata=target_metadata)
