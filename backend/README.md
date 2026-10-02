@@ -4,21 +4,62 @@ FastAPI service. It is the only entry point into PTAssist: the frontend talks on
 
 ## Stack
 
-FastAPI, SQLAlchemy, Alembic, PostgreSQL, pytest. Dependencies in `requirements.txt`.
+FastAPI, SQLAlchemy, Alembic, PostgreSQL (psycopg 3 driver), pytest, ruff. Runtime dependencies in `requirements.txt`; test and lint tools in `requirements-dev.txt`.
 
 ## Layout
 
 ```
 app/
+  main.py    Creates the FastAPI app and includes the routers
+  config.py  Settings from environment variables
+  db.py      SQLAlchemy engine and the get_db session dependency
   routes/    HTTP endpoints, grouped by area
   schemas/   Request and response models (Pydantic)
-  models/    Database tables (SQLAlchemy)
+  models/    Database tables (SQLAlchemy). Base class in base.py
   auth/      Clerk token check, current user, role and ownership checks
   storage/   One module for video storage (MinIO locally, Azure Blob in the cloud)
   jobs/      Background task that calls the AI service
-migrations/  Alembic migrations
+migrations/  Alembic migrations (versions/ holds one file per migration)
 tests/
+alembic.ini  Alembic settings
+Dockerfile   API image, also used to run migrations
 ```
+
+## Run locally
+
+Needs Python 3.12. Run these from `backend/`:
+
+```bash
+python -m venv .venv
+source .venv/bin/activate        # Windows: .venv\Scripts\activate
+pip install -r requirements-dev.txt
+
+uvicorn app.main:app --reload    # http://localhost:8000/health and /docs
+pytest
+ruff check . && ruff format --check .
+```
+
+`GET /health` returns `{"status": "ok"}`. It needs no token and does not touch the database, so Docker and Azure can use it as a liveness probe.
+
+## Docker
+
+```bash
+docker build -t ptassist-api backend      # from the repo root
+docker run --rm -p 8000:8000 -e DATABASE_URL=<url> ptassist-api
+```
+
+The same image runs migrations: `docker run --rm -e DATABASE_URL=<url> ptassist-api alembic upgrade head`.
+
+## Migrations
+
+Alembic reads `DATABASE_URL` from the environment (it is not stored in `alembic.ini`).
+
+```bash
+alembic upgrade head                                   # apply all migrations
+alembic revision --autogenerate -m "add user table"    # create a new one
+```
+
+To add a table: create the model in `app/models/`, import it in `app/models/__init__.py` (so autogenerate can see it), then run `alembic revision --autogenerate`. Always read the generated file before committing. New migrations are linted and formatted with ruff automatically. Constraint and index names follow the naming convention in `app/models/base.py`.
 
 ## Every request
 
@@ -76,7 +117,9 @@ All video access goes through `app/storage/`. Buckets are private. Other code ne
 
 ## Config
 
-Read from environment variables (see `/.env.example`): database URL, Clerk settings, storage settings, and the AI service URL. No secrets in code.
+Read from environment variables (see `/.env.example`): database URL, Clerk settings, storage settings, and the AI service URL. No secrets in code. Settings are defined in `app/config.py`. Add new ones there and in `/.env.example`.
+
+`DATABASE_URL` must use the `postgresql+psycopg://` scheme so SQLAlchemy picks the psycopg 3 driver.
 
 ## Testing
 
