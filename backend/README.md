@@ -124,3 +124,36 @@ Read from environment variables (see `/.env.example`): database URL, Clerk setti
 ## Testing
 
 pytest. Every route needs a test that rejects the wrong role and the wrong owner.
+
+## Pull request CI
+
+The shared workflow in `/.github/workflows/pr-ci.yml` runs on every pull request,
+including documentation-only changes, so required checks are never skipped by a
+path filter. It provides three checks:
+
+- `API lint`: ruff lint and formatting checks.
+- `API tests`: pytest with Python 3.12 and `requirements-dev.txt`.
+- `API image build`: builds `backend/Dockerfile` without pushing an image.
+
+The workflow uses read-only repository permissions and needs no repository secrets.
+The current health test needs no database. Add database setup to the test job when
+database integration tests are introduced. The AI team can add its own job to this
+workflow in SCRUM-26 without renaming the API checks.
+
+### Required checks on main
+
+A repository administrator must configure this in GitHub; the workflow file alone
+does not block merges. After this workflow has run on a pull request:
+
+1. In **Settings > Branches**, add or update a branch protection rule for `main`.
+2. Require a pull request before merging and at least **1 approving review**.
+3. Require status checks before merging and select `API lint`, `API tests`, and
+   `API image build` from GitHub Actions.
+4. Require branches to be up to date before merging and enable **Do not allow
+   bypassing the above settings**. Keep force pushes and branch deletion disabled.
+5. Save the rule. On a disposable PR, introduce a lint or test failure and confirm
+   GitHub blocks merging; fix it and confirm all three checks pass. Approval is
+   still required before merging.
+
+SCRUM-22 is complete only after the checks run on GitHub and the protection rule
+is verified. Keep the check names stable because branch protection refers to them.
