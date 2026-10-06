@@ -1,0 +1,18 @@
+{
+  "camera_width": 640,
+  "camera_height": 480,
+  "min_detection_confidence": 0.5,
+  "min_landmark_confidence": 0.65,
+  "frame_margin": 0.025,
+  "minimum_shoulder_width": 0.16,
+  "smoothing_tau_seconds": 0.12,
+  "max_missing_seconds": 0.75,
+  "start_reach": 0.30,
+  "target_reach": 0.75,
+  "release_reach": 0.55,
+  "rest_reach": 0.15,
+  "return_complete_reach": 0.30,
+  "maximum_wrist_height_offset": 0.45,
+  "hold_seconds": 1.5,
+  "max_attempt_seconds": 15.0
+}

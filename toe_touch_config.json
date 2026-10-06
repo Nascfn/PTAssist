@@ -1,0 +1,19 @@
+{
+  "camera_width": 640,
+  "camera_height": 480,
+  "min_detection_confidence": 0.5,
+  "min_landmark_confidence": 0.65,
+  "frame_margin": 0.025,
+  "max_side_width_to_torso": 0.75,
+  "side_switch_advantage": 0.12,
+  "smoothing_tau_seconds": 0.12,
+  "max_missing_seconds": 0.75,
+  "upright_torso_angle": 15.0,
+  "start_bending_torso_angle": 25.0,
+  "bottom_torso_angle": 50.0,
+  "return_from_bottom_degrees": 10.0,
+  "minimum_start_knee_angle": 155.0,
+  "noticeable_knee_flexion_degrees": 35.0,
+  "near_toes_distance_ratio": 0.15,
+  "max_rep_duration_seconds": 20.0
+}

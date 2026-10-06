@@ -1,0 +1,21 @@
+{
+  "camera_width": 640,
+  "camera_height": 480,
+  "min_detection_confidence": 0.5,
+  "min_landmark_confidence": 0.65,
+  "frame_margin": 0.025,
+  "smoothing_tau_seconds": 0.12,
+  "max_missing_seconds": 0.75,
+  "settle_seconds": 0.45,
+  "rest_angle_degrees": 155,
+  "start_angle_degrees": 140,
+  "bend_target_degrees": 95,
+  "reversal_degrees": 14,
+  "return_angle_degrees": 155,
+  "upper_arm_start_limit_degrees": 40,
+  "upper_arm_warning_degrees": 50,
+  "shoulder_motion_upper_arm_lengths": 0.9,
+  "scale_change_fraction": 0.3,
+  "minimum_cycle_seconds": 0.6,
+  "maximum_cycle_seconds": 20
+}

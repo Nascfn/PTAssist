@@ -74,3 +74,7 @@ Setup steps are added in Sprint 1 as each service is built. You will need Docker
 | Backend and cloud | Paulo, Arthur |
 | AI pipeline | Jonathan, Eduard, Carlos |
 | Frontend | Zach, Sarah |
+
+## Local webcam research prototype
+
+The earlier standalone webcam experiments and validation notes are preserved in [the local webcam research prototype guide](docs/local-webcam-poc.md). They are separate from the upload-only Fall 2026 web-app scope.
