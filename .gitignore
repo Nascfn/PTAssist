@@ -29,3 +29,7 @@ dist/
 .idea/
 .DS_Store
 Thumbs.db
+
+# Local webcam research output
+/sessions/
+/references/
