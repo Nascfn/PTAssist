@@ -124,3 +124,33 @@ Read from environment variables (see `/.env.example`): database URL, Clerk setti
 ## Testing
 
 pytest. Every route needs a test that rejects the wrong role and the wrong owner.
+
+## Pull request CI
+
+The shared workflow in `/.github/workflows/pr-ci.yml` runs on every pull request,
+including documentation-only changes, so required checks are never skipped by a
+path filter. It provides three checks:
+
+- `API lint`: ruff lint and formatting checks.
+- `API tests`: pytest with Python 3.12 and `requirements-dev.txt`.
+- `API image build`: builds `backend/Dockerfile` without pushing an image.
+
+The workflow uses read-only repository permissions and needs no repository secrets.
+The `API tests` job sets a placeholder `DATABASE_URL` because `app/config.py` reads
+it at import time; nothing connects to it. Add a Postgres service to the job when
+tests need a real database. The AI team can add its own job to this
+workflow in SCRUM-26 without renaming the API checks.
+
+### Required checks on main
+
+`main` is protected by the `trunk-based` repository ruleset (**Settings > Rules >
+Rulesets**), not a classic branch protection rule. It requires a pull request with
+1 approving review and allows squash merges only. Its **Require status checks to
+pass** rule lists `API lint`, `API tests`, and `API image build` from GitHub
+Actions, so a failing check blocks merging. Branches do not need to be up to date
+with `main` before merging.
+
+Keep the job names stable: the ruleset matches checks by name, so a renamed or
+removed job leaves every pull request waiting for a check that never reports. When
+a team adds a job to this workflow, a repository admin must also add its name to
+the ruleset for it to block merges.
