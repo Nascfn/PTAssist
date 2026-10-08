@@ -35,6 +35,9 @@ jobs:
     name: API tests
     runs-on: ubuntu-latest
     timeout-minutes: 10
+    env:
+      # Placeholder: app/config.py reads DATABASE_URL at import time. Tests do not connect to it.
+      DATABASE_URL: postgresql+psycopg://ptassist:ptassist@localhost:5432/ptassist
     defaults:
       run:
         working-directory: backend

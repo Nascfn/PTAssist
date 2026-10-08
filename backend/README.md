@@ -136,24 +136,21 @@ path filter. It provides three checks:
 - `API image build`: builds `backend/Dockerfile` without pushing an image.
 
 The workflow uses read-only repository permissions and needs no repository secrets.
-The current health test needs no database. Add database setup to the test job when
-database integration tests are introduced. The AI team can add its own job to this
+The `API tests` job sets a placeholder `DATABASE_URL` because `app/config.py` reads
+it at import time; nothing connects to it. Add a Postgres service to the job when
+tests need a real database. The AI team can add its own job to this
 workflow in SCRUM-26 without renaming the API checks.
 
 ### Required checks on main
 
-A repository administrator must configure this in GitHub; the workflow file alone
-does not block merges. After this workflow has run on a pull request:
+`main` is protected by the `trunk-based` repository ruleset (**Settings > Rules >
+Rulesets**), not a classic branch protection rule. It requires a pull request with
+1 approving review and allows squash merges only. Its **Require status checks to
+pass** rule lists `API lint`, `API tests`, and `API image build` from GitHub
+Actions, so a failing check blocks merging. Branches do not need to be up to date
+with `main` before merging.
 
-1. In **Settings > Branches**, add or update a branch protection rule for `main`.
-2. Require a pull request before merging and at least **1 approving review**.
-3. Require status checks before merging and select `API lint`, `API tests`, and
-   `API image build` from GitHub Actions.
-4. Require branches to be up to date before merging and enable **Do not allow
-   bypassing the above settings**. Keep force pushes and branch deletion disabled.
-5. Save the rule. On a disposable PR, introduce a lint or test failure and confirm
-   GitHub blocks merging; fix it and confirm all three checks pass. Approval is
-   still required before merging.
-
-SCRUM-22 is complete only after the checks run on GitHub and the protection rule
-is verified. Keep the check names stable because branch protection refers to them.
+Keep the job names stable: the ruleset matches checks by name, so a renamed or
+removed job leaves every pull request waiting for a check that never reports. When
+a team adds a job to this workflow, a repository admin must also add its name to
+the ruleset for it to block merges.
