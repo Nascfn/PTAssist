@@ -7,7 +7,8 @@ from sqlalchemy.orm import Session
 
 from app.config import DATABASE_URL
 
-engine = create_engine(DATABASE_URL, pool_pre_ping=True)
+# hide_parameters keeps query values (like emails) out of logs and error messages.
+engine = create_engine(DATABASE_URL, pool_pre_ping=True, hide_parameters=True)
 
 
 def get_db() -> Iterator[Session]:

@@ -1,5 +1,4 @@
 # Local development and CI: runtime dependencies plus test and lint tools.
 -r requirements.txt
-httpx==0.28.1
 pytest==9.1.1
 ruff==0.16.9
