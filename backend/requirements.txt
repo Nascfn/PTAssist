@@ -1,6 +1,8 @@
 # Runtime dependencies (installed in the Docker image). Pin exact versions.
 alembic==1.20.0
+clerk-backend-api==7.0.0
 fastapi==0.142.2
+httpx==0.28.1
 psycopg[binary]==3.3.6
 sqlalchemy==2.1.1
 uvicorn==0.54.0

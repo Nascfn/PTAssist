@@ -35,9 +35,24 @@ jobs:
     name: API tests
     runs-on: ubuntu-latest
     timeout-minutes: 10
+    services:
+      # Throwaway test database. Same port and credentials as the local setup in backend/README.md.
+      postgres:
+        image: postgres:17
+        env:
+          POSTGRES_USER: ptassist
+          POSTGRES_PASSWORD: ptassist
+          POSTGRES_DB: ptassist_test
+        ports:
+          - 5433:5432
+        options: >-
+          --health-cmd "pg_isready -U ptassist -d ptassist_test"
+          --health-interval 5s
+          --health-timeout 5s
+          --health-retries 10
     env:
-      # Placeholder: app/config.py reads DATABASE_URL at import time. Tests do not connect to it.
-      DATABASE_URL: postgresql+psycopg://ptassist:ptassist@localhost:5432/ptassist
+      # tests/conftest.py points the app at this database.
+      TEST_DATABASE_URL: postgresql+psycopg://ptassist:ptassist@localhost:5433/ptassist_test
     defaults:
       run:
         working-directory: backend
